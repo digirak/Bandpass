@@ -22,7 +22,7 @@ freqs=freqs_new[1:N+1]
 freq_base=150e+6
 dx=1
 #x=4+np.arange(180)*dx
-x=np.arange(2200)
+x=np.arange(1800)
 #x=7+sp.jv(0,np.arange(300))*dx
 base_lims=x.size
 c=3e+8
@@ -49,7 +49,7 @@ beam_i=np.zeros(base_lims*base_lims).reshape(base_lims,base_lims)
 beam=p.map(mwa_beam,zip(repeat(base_lims),freqs),chunksize=1)
 
 #beam=Proces
-beam=np.asarray(beam,dtype=complex)
+beam=np.asarray(beam)
 p.terminate()
 #for i in range(freqs.size):
  #   var1=(base_lims,freqs[i])

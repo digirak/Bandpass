@@ -16,8 +16,8 @@ freqs_new=freqs_st+np.arange(-1,N+1)*df
 freqs=freqs_new[1:N+1]
 #freqs[1]=freqs[200]=freqs[100]=df
 freq_base=160e+6/2
-dx=1
-x=0+np.arange(190)*dx
+dx=4
+x=4+np.arange(300)*dx
 #x=7+sp.jv(0,np.arange(300))*dx
 base_lims=x.size
 c=3e+8

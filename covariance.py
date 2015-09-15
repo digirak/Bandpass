@@ -16,8 +16,8 @@ freqs_new=freqs_st+np.arange(-1,N+1)*df
 freqs=freqs_new[1:N+1]
 #freqs[1]=freqs[200]=freqs[100]=df
 freq_base=160e+6/2
-dx=1
-x=0+np.arange(190)*dx
+dx=4
+x=4+np.arange(300)*dx
 #x=7+sp.jv(0,np.arange(300))*dx
 base_lims=x.size
 c=3e+8
@@ -183,6 +183,15 @@ deltarho=(k/np.max(k))
 deltaxrho=deltax*deltarho
 
 P21=(559.21)*(xhmean**2*deltarho+(xhmean-xhmean**2)*deltaxrho+(xhmean-xhmean**2)*deltax)
+
+## get into 2d
+theta=np.arctan(kpar/kperp[0:kpar.size])
+P21kperp=P21*np.cos(theta[0:P21.size])
+P21kpar=P21*np.sin(theta[0:P21.size])
+P212d=np.zeros(P21.size*P21.size).reshape(P21.size,P21.size)
+for i in range(P21kperp.size):
+    P212d[:,i]=(2*PI**2)*P21kpar[:]*P21kperp[i]/(k**3)
+
 
 #fig,ax=plt.subplots()
 plt.figure('BN')
