@@ -7,6 +7,9 @@ from scipy import signal as sig
 #mpl.rcParams['text.latex.unicode']=True
 #from matplotlib import pyplot as plt
 from mwa_new_beam import mwa_beam
+from multiprocessing import Pool
+from itertools import repeat
+
 freqs_st=150e+6
 #PI=np.pi
 #freq resolution in Hz
@@ -19,7 +22,7 @@ freqs=freqs_new[1:N+1]
 freq_base=150e+6
 dx=1
 #x=4+np.arange(180)*dx
-x=np.arange(2000)
+x=np.arange(1600)
 #x=7+sp.jv(0,np.arange(300))*dx
 base_lims=x.size
 c=3e+8
@@ -41,15 +44,20 @@ term2=(S_max**(3-beta)/S**(-beta))*np.power((freqs/freq_base),(-1*gamma))
 
 C_fg=np.zeros(N*N*base_lims/2).reshape(N,N,base_lims/2)
 beam=np.empty(N*base_lims*base_lims,dtype=complex).reshape(base_lims,base_lims,N)
-beam_r=np.zeros(base_lims*base_lims).reshape(base_lims,base_lims)
-beam_i=np.zeros(base_lims*base_lims).reshape(base_lims,base_lims)
-for i in range(freqs.size):
-    beam_r[:,:]=np.real(mwa_beam(base_lims,freqs[i]))
-    beam_i[:,:]=np.imag(mwa_beam(base_lims,freqs[i]))
-    beam[:,:,i]=beam_r+np.exp(-((beam_i))*1J)
-del beam_r,beam_i
+#beam_r=np.zeros(base_lims*base_lims).reshape(base_lims,base_lims)
+#beam_i=np.zeros(base_lims*base_lims).reshape(base_lims,base_lims)
+#for i in range(freqs.size):
+#    beam_r[:,:]=np.real(mwa_beam(base_lims,freqs[i]))
+ #   beam_i[:,:]=np.imag(mwa_beam(base_lims,freqs[i]))
+ #   beam[:,:,i]=beam_r+np.exp(-((beam_i))*1J)
+#del beam_r,beam_i
 #C_fgbh=np.zeros(N*N*base_lims).reshape(N,N,base_lims)
 #for i in range(N):
+p=Pool(6)
+beam=p.map(mwa_beam,zip(repeat(base_lims),freqs),chunksize=1)
+beam=np.asarray(beam)
+p.terminate()
+beam=np.transpose(beam)
 beam=beam*term2*term1
 #C_fg4d=np.empty(base_lims*base_lims*N*N).reshape(base_lims,base_lims,N,N)
 #for uLoop in range(base_lims):
@@ -61,9 +69,6 @@ beam=beam*term2*term1
 C_fgft=np.zeros(base_lims*base_lims).reshape(base_lims,base_lims)
 temp=np.zeros(base_lims)
 temp1=np.zeros(base_lims/2)
-i,j=np.meshgrid(np.arange(base_lims),np.arange(base_lims))
-omega=np.exp(-2*PI*1J/base_lims)
-W=np.power(omega,i*j)
 for nuLoop in range(N):
     for nupLoop in range(N):
         #selecting all (l,m) using nu and nu' parameters
